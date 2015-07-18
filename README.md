@@ -24,6 +24,10 @@ This will over-ride the System V init script.
 The unit file pulls some environment variables from the [Debian default](tomcat7) file
 (`/etc/default/tomcat7`). (My version is heavily modified compared to the stock version).
 
+Once you've update the unit file remember to reload systemd's configuration:
+
+    $ sudo systemctl demon-reload
+
 # Tomcat server.xml
 
 I've also modified the tomcat [server.xml](server.xml) file, since the stock version doesn't
@@ -34,6 +38,16 @@ certificate:
       -alias tomcat7 -keystore /etc/tomcat7/keystore \
       -keypass "ABetterPasswordThanThis" -storepass "ABetterPasswordThanThis" \
       -dname "CN=localhost, OU=My Toy Server, O=localhost L=Some City, ST=Some State, C=XX"
+
+# authbind
+
+According to its man page, authbind allows you to "bind sockets to privileged ports without root", which is great if you're trying to run an unpriveleged webserver.
+
+To permit tomcat access to ports 80 (http) and 443 (https), run the following commands:
+
+    sudo sh -c 'for port in 80 443 ; do $( cd /etc/authbind/byport && touch $port && chown tomcat7.tomcat7 $port && chmod 0100 $port ); done '
+
+which creates two files in /etc/authbind/byport (one named 80 and one named 443), gives them to the tomcat7 user and sets the execute bit.
 
 # Licence
 
