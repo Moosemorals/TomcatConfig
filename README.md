@@ -49,6 +49,97 @@ To permit tomcat access to ports 80 (http) and 443 (https), run the following co
 
 which creates two files in /etc/authbind/byport (one named 80 and one named 443), gives them to the tomcat7 user and sets the execute bit.
 
+# Working with maven
+
+[Apache Maven](https://maven.apache.org/) is a "software project management and
+comprehension tool" according to its website, or a build and dependency 
+management tool (according to me).
+
+Maven can semi-automaticaly deploy to tomcat, but needs a little setting up
+on the tomcat side first.
+
+Specificaly, you need to make sure the tomcat-admin package is installed:
+
+    sudo apt-get install tomcat7-admin
+
+add a management user to `/etc/tomcat7/tomcat-users.xml`:
+
+    <tomcat-users>
+        <user username="manager" password="ThisPasswordIsImportant" roles="manager-script" />
+    </tomcat-users>
+
+(note that anyone who knows, or can brute-force this password can upload web-apsps to your server. I've written a [password generator](https://moosemorals.com/tools/password.html) that might help.)
+
+add a server definition to your maven settings file (`~/.m2/settings.xml`)
+
+    <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+      ...
+      <servers>
+        ...
+        <server>
+          <id>localhost-tomcat</id>
+          <username>manager</username>
+          <password>ThisPasswordIsImportant</password>
+        </server>
+        ...
+      </servers>
+      ...
+    </settings>
+
+and finaly, update your project [pom.xml](https://maven.apache.org/pom.html):
+
+    <project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+      ...
+      <profiles>
+        ...
+        <profile>
+            <id>local</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <tomcat-server>localhost-tomcat</tomcat-server>
+                <!-- Change this to the hostname of your server
+                     Think about https, but self-signed certs aren't
+                     trusted. I'm looking into that. -->
+                <tomcat-url>http://localhost:80/manager/text</tomcat-url>
+            </properties>
+        </profile>
+        ...
+      </profiles>
+      ...
+      <build>
+        ...
+        <plugins>
+          ...
+          <plugin>
+            <groupId>org.apache.tomcat.maven</groupId>
+            <artifactId>tomcat7-maven-plugin</artifactId>
+            <version>2.2</version>
+            <configuration>
+              <url>${tomcat-url}</url>
+              <server>${tomcat-server}</server>
+              <!-- Change this path to the context path for your project -->
+              <path>/</path>
+            </configuration>
+          </plugin>
+          ...
+        </plugins>
+        ...
+      </build>
+      ...
+    </project>
+
+When you're ready to deploy to tomcat, you can just
+
+   mvn tomcat7:redeploy
+
+to update the server.
+
 # Licence
 
 My modifications are MIT licenced, but mostly I'd just like to know if you find them useful.
