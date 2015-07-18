@@ -43,7 +43,7 @@ certificate:
 
 According to its man page, authbind allows you to "bind sockets to privileged ports without root", which is great if you're trying to run an unpriveleged webserver.
 
-To permit tomcat access to ports 80 (http) and 443 (https), run the following commands:
+To permit tomcat access to ports 80 (http) and 443 (https), run the following command:
 
     sudo sh -c 'for port in 80 443 ; do $( cd /etc/authbind/byport && touch $port && chown tomcat7.tomcat7 $port && chmod 0100 $port ); done '
 
