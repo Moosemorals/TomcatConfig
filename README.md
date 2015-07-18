@@ -35,3 +35,13 @@ certificate:
       -keypass "ABetterPasswordThanThis" -storepass "ABetterPasswordThanThis" \
       -dname "CN=localhost, OU=My Toy Server, O=localhost L=Some City, ST=Some State, C=XX"
 
+# Licence
+
+My modifications are MIT licenced, but mostly I'd just like to know if you find them useful.
+
+The original files from Apache ([server.xml](server.xml) and [catalina.properties](catalina.properties))
+are [Apache licenced](http://www.apache.org/licenses/LICENSE-2.0.html).
+
+The systemd unit file that I've based mine on is from a webpage © Copyright 2015 Jonathan de Boyne Pollard.
+I've emailed asking for permission to distribute my modifications, and I'm waiting for a response.
+
