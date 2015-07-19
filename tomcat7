@@ -4,8 +4,8 @@ JAVA_HOME=/usr/lib/jvm/default-java
 
 CLASSPATH=/usr/share/tomcat7/bin/bootstrap.jar:/usr/share/tomcat7/bin/tomcat-juli.jar
 
-JAVA_OPTS=-Djava.awt.headless=true -Xmx128M
-CATALINA_OPTS=-Djava.util.logging.config.file=/var/lib/tomcat7/conf/logging.properties -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+JAVA_OPTS="-Djava.awt.headless=true -Xmx128M"
+CATALINA_OPTS="-Djava.util.logging.config.file=/var/lib/tomcat7/conf/logging.properties -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager"
 
 JAVA_ENDORSED_DIRS=/usr/share/tomcat7/endorsed
 CATALINA_TMPDIR=/tmp/tomcat7
